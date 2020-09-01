@@ -5,12 +5,17 @@ import InfoBox from './InfoBox';
 import Map from './Map';
 import Table from './Table';
 import { sortData } from './util';
+import LineGraph from './LineGraph';
+import "leaflet/dist/leaflet.css"
 
 function App() {
     const[countries, setCountries] = useState([]);
     const[country, setCountry] = useState('worldwide');
     const [countryInfo, setCountryInfo] = useState({});
+    const [mapCountries, setMapCountries] = useState([]);
     const[tableData, setTableData] =useState([]);
+    const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
+    const [mapZoom, setMapZoom] = useState(3);
 
     //STATE = how to write a variable in react
 
@@ -41,6 +46,7 @@ function App() {
 
                 const sortedData = sortData(data);
                 setTableData(sortedData);
+                setMapCountries(data);
                 setCountries(countries);
            })
        };
@@ -62,10 +68,10 @@ function App() {
         .then((response) => response.json())
         .then((data) => {
             setCountry(countryCode);
-
             //All of the data from the country response
             setCountryInfo(data);
-              
+            setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+            setMapZoom(5);     
             })
     };
 
@@ -114,8 +120,11 @@ function App() {
               />
 
                 </div>
-
-             <Map />
+             <Map 
+             countries = {mapCountries}
+             center= {mapCenter}
+             zoom= {mapZoom}
+             />
 
          </div>
 
@@ -125,6 +134,8 @@ function App() {
          <Table countries={tableData} />
 
           <h3>WorldWide New Cases</h3>
+          <LineGraph />
+
       </CardContent>
     
       </Card>
